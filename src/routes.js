@@ -2,13 +2,13 @@
 const express = require('express');
 const router = express.Router();
 const schemas = require('./schemas');
-const { createUser } = require('./service/user');
+const { createUser, authenticateUser } = require('./service/user');
 const { validatorBody } = require('./middlewares/validator');
 
 
-router.post("/signup", validatorBody(schemas.body), async (req,res) => {
+router.post("/signup", validatorBody(schemas.bodySignup), async (req,res) => {
     try{
-        const createdUser = createUser(req.body)
+        const createdUser =await createUser(req.body)
         if (createdUser) {
             console.log('Utilisateur crée ');
             res.sendStatus(200);
@@ -21,4 +21,14 @@ router.post("/signup", validatorBody(schemas.body), async (req,res) => {
         res.status(400).send(error.message);
     }
 })
+router.post("/signin", validatorBody(schemas.bodySignin), async (req,res) => {
+    try{
+        const authUser = await authenticateUser(req.body);
+    res.status(200).json(authUser);
+        
+    } catch(error){
+        res.status(400).send(error.message);
+    }
+});
+
 module.exports = router;

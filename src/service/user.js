@@ -2,14 +2,14 @@
 
 const { transaction } = require('../repository/transacting');
 const { KNEX } = require('../db/connexion');
-const { hashData } = require('./util');
+const { hashData, verifyHashedData, createToken } = require('./util');
 
 async function createUser(body) {
 	try{
 		const {nom, prenom, email, password } = body;
 		const userByEmail = await getUserByEmailRepo(email);
 		console.log('userByEmail :',userByEmail);
-		if (userByEmail.length>0){
+		if (userByEmail){
 			throw Error("Utilisateur existe déja");
 		}
 		const hashedPassword = await hashData(password);
@@ -33,6 +33,27 @@ async function getUserById(req, res) {
 	
 }
 
+const authenticateUser = async (data) => {
+	try {
+		const { email, password } = data;
+		const userByEmail = await getUserByEmailRepo(email);
+		console.log('userByEmail :',userByEmail);
+		if (!userByEmail){
+			throw Error("Utilisateur n'existe pas");
+		}
+		const hashedPassword = userByEmail.password;
+		const isPasswordMatch = await verifyHashedData(password, hashedPassword);
+		if(!isPasswordMatch){
+			throw Error("le mot de passe est invalide");
+		}
+		const tokenData = {userId: userByEmail.id, email};
+		const accessToken = await createToken(tokenData);
+
+		return {accessToken};
+	}catch (error){
+		throw error;
+	}
+};
 function getUserByIdRepo(id) {
 	return transaction(KNEX, ({ user }) => user.findById(id));
 }
@@ -46,5 +67,6 @@ function insertUserRepo(userToCreate) {
 
 module.exports = {
 	createUser, 
-	getUserById
+	getUserById,
+	authenticateUser
 };

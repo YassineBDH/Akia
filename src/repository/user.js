@@ -20,9 +20,8 @@ module.exports = {
 		findById: async id => (await trx(USER_TABLE)
 			.where({ id })
 		).map(({ nom, prenom, email }) => ({ nom, prenom, email })),
-		findByEmail: async email => (await trx(USER_TABLE)
-			.where({ email })
-		).map(({ nom, prenom, email }) => ({ nom, prenom, email })),
+		findByEmail: async email => await trx(USER_TABLE)
+			.where({ email }).first(),
 		deleteById: async id => (trx(USER_TABLE)
 			.where({ id }).del()
 		)
