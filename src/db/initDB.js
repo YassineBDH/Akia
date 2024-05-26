@@ -30,8 +30,8 @@ async function initDB() {
     if (!await connexion.schema.hasTable('user_role')){
         console.log('creation de la table user_role');
         await connexion.schema.createTable('user_role',table => {
-            table.string('user_id');
-            table.string('role_id');
+            table.integer('user_id');
+            table.integer('role_id');
             table
             .foreign("user_id")
             .references("user.id")

@@ -32,7 +32,26 @@ async function getUserById(req, res) {
 	}
 	
 }
-
+async function deleteUserById(req, res) {
+	try {
+		const id = decodeURIComponent(req.params.userId);
+		await deleteUserByIdRepo(id);
+		console.log('delete User By id',id);
+	} catch (error) {
+		throw error;
+	}
+	
+}
+async function getAllUsers() {
+	try {
+		const result = await getAllUsersRepo();
+		console.log('get All users', { result });
+		return result
+	} catch (error) {
+		throw error;
+	}
+	
+}
 const authenticateUser = async (data) => {
 	try {
 		const { email, password } = data;
@@ -57,6 +76,9 @@ const authenticateUser = async (data) => {
 function getUserByIdRepo(id) {
 	return transaction(KNEX, ({ user }) => user.findById(id));
 }
+function deleteUserByIdRepo(id) {
+	return transaction(KNEX, ({ user }) => user.deleteById(id));
+}
 function getUserByEmailRepo(email) {
 	return transaction(KNEX, ({ user }) => user.findByEmail(email));
 }
@@ -64,9 +86,14 @@ function getUserByEmailRepo(email) {
 function insertUserRepo(userToCreate) {
 	return transaction(KNEX, ({ user }) => user.insert([userToCreate]));
 }
+function getAllUsersRepo() {
+	return transaction(KNEX, ({ user }) => user.findAll());
+}
 
 module.exports = {
 	createUser, 
 	getUserById,
-	authenticateUser
+	authenticateUser,
+	getAllUsers,
+	deleteUserById
 };

@@ -17,9 +17,8 @@ module.exports = {
 			const result = await trx.select().from(USER_TABLE);
 			return result;
 		},
-		findById: async id => (await trx(USER_TABLE)
-			.where({ id })
-		).map(({ nom, prenom, email }) => ({ nom, prenom, email })),
+		findById: async id => await trx(USER_TABLE)
+			.where({ id }).first(),
 		findByEmail: async email => await trx(USER_TABLE)
 			.where({ email }).first(),
 		deleteById: async id => (trx(USER_TABLE)

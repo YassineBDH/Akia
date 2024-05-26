@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require ("jsonwebtoken");
-const TOKEN_KEY = 'esqg5341dg2s3';
-const TOKEN_EXPIRY = '1h';
+const TOKEN_KEY =process.env.TOKEN_KEY;
+const TOKEN_EXPIRY =process.env.TOKEN_EXPIRY
 
 const hashData = async (data,saltRounds = 10) =>{
     try {

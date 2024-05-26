@@ -4,10 +4,10 @@ const knex = require('knex');
 
 async function getConnectionInfo() {
 	return {
-		host: 'localhost',
-		user: 'postgres',
-		password: 'postgres',
-		database: 'akia'
+		host: process.env.DB_HOST,
+		user: process.env.DB_USER,
+		password: process.env.DB_PASSWORD,
+		database: process.env.DB_NAME
 	};
 }
 
